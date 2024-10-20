@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"os"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -12,10 +13,17 @@ type Config struct {
 }
 
 type Meshtastic struct {
-	Address string
+	Address         string
+	RequestTimeout  time.Duration
+	PollingInterval time.Duration
 }
 
-var C Config
+var C = Config{
+	Meshtastic: Meshtastic{
+		RequestTimeout:  time.Second * 5,
+		PollingInterval: time.Millisecond * 500,
+	},
+}
 
 func Load() error {
 	return load("matrix-meshtastic-bridge.json")

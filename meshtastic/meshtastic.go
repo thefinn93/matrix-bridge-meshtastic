@@ -1,6 +1,8 @@
 package meshtastic
 
 import (
+	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,11 +15,14 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-var shutdownRequested = false
+const (
+	pathFromRadio = "/api/v1/fromradio"
+	pathToRadio   = "/api/v1/toradio"
+)
 
-func Receive() error {
-	for !shutdownRequested {
-		fromRadio, err := getFromRadio()
+func Receive(ctx context.Context) {
+	for ctx.Err() == nil {
+		fromRadio, err := getFromRadio(ctx)
 		if err != nil {
 			logrus.WithError(err).Error("error communicating with radio")
 		}
@@ -26,37 +31,27 @@ func Receive() error {
 			logrus.Debugf("fromRadio: %+v", fromRadio)
 		}
 
-		time.Sleep(time.Second)
+		time.Sleep(config.C.Meshtastic.PollingInterval)
 
 	}
-	return nil
 }
 
-func getFromRadio() (*protobufs.FromRadio, error) {
-	u := url.URL{
-		Scheme: "http",
-		Host:   config.C.Meshtastic.Address,
-		Path:   "/api/v1/fromradio",
-	}
-	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
-	if err != nil {
-		return nil, fmt.Errorf("error building request to radio: %v", err)
-	}
-	req.Header.Add("Accept", "application/x-protobuf")
+func ShutdownReceiver() {
+	// TODO: wait for receive loop to cleanly exit
+}
 
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("error making request to radio: %v", err)
-	}
-	defer resp.Body.Close()
+func SendConfigInit(ctx context.Context) error {
+	return sendToRadio(ctx, &protobufs.ToRadio{
+		PayloadVariant: &protobufs.ToRadio_WantConfigId{
+			WantConfigId: 4, // chosen by fair dice roll. guaranteed to be random. - actually though, we dont do anything special when startup is over so we dont care about this.
+		},
+	})
+}
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected %s from radio", resp.Status)
-	}
-
-	body, err := io.ReadAll(resp.Body)
+func getFromRadio(ctx context.Context) (*protobufs.FromRadio, error) {
+	body, err := request(ctx, http.MethodGet, pathFromRadio, nil)
 	if err != nil {
-		return nil, fmt.Errorf("error reading response from radio: %v", err)
+		return nil, err
 	}
 
 	fromRadio := protobufs.FromRadio{}
@@ -66,4 +61,54 @@ func getFromRadio() (*protobufs.FromRadio, error) {
 	}
 
 	return &fromRadio, nil
+}
+
+func sendToRadio(ctx context.Context, req *protobufs.ToRadio) error {
+	requestBody, err := proto.Marshal(req)
+	if err != nil {
+		return fmt.Errorf("error marshalling ToRadio payload: %v", err)
+	}
+
+	resp, err := request(ctx, http.MethodPut, pathToRadio, requestBody)
+	if err != nil {
+		return err
+	}
+
+	logrus.WithField("resp_body", string(resp)).Debug("completed request to radio")
+
+	return nil
+}
+
+func request(ctx context.Context, method, path string, body []byte) ([]byte, error) {
+	u := url.URL{
+		Scheme: "http",
+		Host:   config.C.Meshtastic.Address,
+		Path:   path,
+	}
+
+	req, err := http.NewRequest(method, u.String(), bytes.NewBuffer(body))
+	if err != nil {
+		return nil, fmt.Errorf("error building request to radio with path %s: %v", path, err)
+	}
+	req.Header.Add("Accept", "application/x-protobuf")
+
+	ctx, cancel := context.WithTimeout(ctx, config.C.Meshtastic.RequestTimeout)
+	defer cancel()
+
+	resp, err := http.DefaultClient.Do(req.WithContext(ctx))
+	if err != nil {
+		return nil, fmt.Errorf("error making request to radio with path %s: %v", path, err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected %s from radio to path %s", resp.Status, path)
+	}
+
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response from radio path %s: %v", path, err)
+	}
+
+	return responseBody, nil
 }

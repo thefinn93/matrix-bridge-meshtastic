@@ -1,9 +1,14 @@
 package main
 
 import (
+	"context"
+	"os"
+	"os/signal"
+
+	"github.com/sirupsen/logrus"
+
 	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/config"
 	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/meshtastic"
-	"github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -18,5 +23,18 @@ func run() error {
 		return err
 	}
 
-	return meshtastic.Receive()
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
+
+	go meshtastic.Receive(ctx)
+
+	if err := meshtastic.SendConfigInit(ctx); err != nil {
+		logrus.WithError(err).Error("error sending init to meshtastic")
+	}
+
+	<-ctx.Done()
+
+	meshtastic.ShutdownReceiver()
+
+	return nil
 }
