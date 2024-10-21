@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -35,8 +36,17 @@ var C = Config{
 	},
 }
 
+var defaultConfigFiles = []string{"/etc/matrix-bridge-meshtastic.json", "matrix-bridge-meshtastic.json"}
+
 func Load() error {
-	for _, filename := range []string{"/etc/matrix-bridge-meshtastic.json", "matrix-bridge-meshtastic.json"} {
+	configFiles := defaultConfigFiles
+
+	envConfigFiles := os.Getenv("MATRIX_BRIDGE_MESHTASTIC_CONFIG")
+	if envConfigFiles != "" {
+		configFiles = strings.Split(envConfigFiles, ",")
+	}
+
+	for _, filename := range configFiles {
 		err := load(filename)
 		if err != nil && !os.IsNotExist(err) {
 			return err
