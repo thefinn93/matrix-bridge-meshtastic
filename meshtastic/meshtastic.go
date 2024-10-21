@@ -20,19 +20,23 @@ const (
 	pathToRadio   = "/api/v1/toradio"
 )
 
-func Receive(ctx context.Context) {
-	for ctx.Err() == nil {
-		fromRadio, err := getFromRadio(ctx)
-		if err != nil {
-			logrus.WithError(err).Error("error communicating with radio")
+func Receive(ctx context.Context, ch chan *protobufs.FromRadio) {
+	t := time.NewTicker(config.C.Meshtastic.PollingInterval)
+	for {
+		select {
+		case <-t.C:
+			fromRadio, err := getFromRadio(ctx)
+			if err != nil {
+				logrus.WithError(err).Error("error communicating with radio")
+			}
+
+			if fromRadio != nil && fromRadio.PayloadVariant != nil {
+				ch <- fromRadio
+			}
+
+		case <-ctx.Done():
+			return
 		}
-
-		if fromRadio != nil && fromRadio.PayloadVariant != nil {
-			logrus.Debugf("fromRadio: %+v", fromRadio)
-		}
-
-		time.Sleep(config.C.Meshtastic.PollingInterval)
-
 	}
 }
 

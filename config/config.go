@@ -6,10 +6,13 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
+	"maunium.net/go/mautrix/id"
 )
 
 type Config struct {
 	Meshtastic Meshtastic
+	Matrix     Matrix
+	Database   string
 }
 
 type Meshtastic struct {
@@ -18,7 +21,14 @@ type Meshtastic struct {
 	PollingInterval time.Duration
 }
 
+type Matrix struct {
+	User     id.UserID
+	Password string
+	Room     id.RoomID
+}
+
 var C = Config{
+	Database: "matrix-meshtastic-bridge.db",
 	Meshtastic: Meshtastic{
 		RequestTimeout:  time.Second * 5,
 		PollingInterval: time.Millisecond * 500,
