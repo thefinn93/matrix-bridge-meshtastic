@@ -1,0 +1,29 @@
+on: [push]
+jobs:
+  build-container:
+    runs-on: docker
+    container:
+      image: library/docker:dind
+    steps:
+      - run: apk add --no-cache nodejs git
+      - name: login to container registry
+        run: echo "${{ secrets.PACKAGE_PUBLISH_TOKEN }}" | docker login --username finn --password-stdin git.janky.solutions
+      - name: gather metadata for container image tags
+        uses: https://github.com/docker/metadata-action@v5
+        id: meta
+        with:
+          images: git.janky.solutions/finn/matrix-bridge-meshtastic
+          tags: |
+            type=schedule
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=ref,event=branch
+            type=sha
+      - name: build container image
+        uses: docker/build-push-action@v6
+        with:
+          file: Containerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          push: ${{ github.ref == 'refs/heads/main' }}

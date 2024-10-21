@@ -28,7 +28,7 @@ type Matrix struct {
 }
 
 var C = Config{
-	Database: "matrix-meshtastic-bridge.db",
+	Database: "matrix-bridge-meshtastic.db",
 	Meshtastic: Meshtastic{
 		RequestTimeout:  time.Second * 5,
 		PollingInterval: time.Millisecond * 500,
@@ -36,7 +36,14 @@ var C = Config{
 }
 
 func Load() error {
-	return load("matrix-meshtastic-bridge.json")
+	for _, filename := range []string{"/etc/matrix-bridge-meshtastic.json", "matrix-bridge-meshtastic.json"} {
+		err := load(filename)
+		if err != nil && !os.IsNotExist(err) {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func load(filename string) error {
