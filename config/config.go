@@ -53,6 +53,12 @@ func Load() error {
 		}
 	}
 
+	// someday i'll bring a proper config library, until then you get this
+	matrixPassword := os.Getenv("MATRIX_PASSWORD")
+	if matrixPassword != "" {
+		C.Matrix.Password = matrixPassword
+	}
+
 	return nil
 }
 
