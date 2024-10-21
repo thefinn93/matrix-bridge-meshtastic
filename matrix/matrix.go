@@ -31,7 +31,7 @@ func Setup(ctx context.Context) error {
 		UserAgent:     "matrix-meshtastic-bridge-go/unversioned",
 		Client:        &http.Client{Timeout: 180 * time.Second},
 		Syncer:        mautrix.NewDefaultSyncer(),
-		Log:           zerolog.New(logrus.New().Out),
+		Log:           zerolog.Nop(),
 		Store:         dbSyncStore{},
 	}
 

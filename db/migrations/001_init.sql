@@ -4,11 +4,10 @@ PRAGMA foreign_keys = ON;
 
 CREATE TABLE meshtastic_nodes (
     id INTEGER PRIMARY KEY NOT NULL,
-    node_num INTEGER NOT NULL,
+    node_num INTEGER UNIQUE NOT NULL,
     meshtastic_id TEXT NOT NULL,
     long_name TEXT,
     short_name TEXT,
-    mac TEXT,
     hw_model TEXT,
     public_key BLOB,
     matrix_id TEXT

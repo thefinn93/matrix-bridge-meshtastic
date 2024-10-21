@@ -32,7 +32,6 @@ type MeshtasticNode struct {
 	MeshtasticID string
 	LongName     sql.NullString
 	ShortName    sql.NullString
-	Mac          sql.NullString
 	HwModel      sql.NullString
 	PublicKey    []byte
 	MatrixID     sql.NullString

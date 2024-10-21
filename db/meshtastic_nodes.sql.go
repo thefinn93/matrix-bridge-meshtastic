@@ -10,12 +10,31 @@ import (
 	"database/sql"
 )
 
+const meshtasticNodeGet = `-- name: MeshtasticNodeGet :one
+SELECT id, node_num, meshtastic_id, long_name, short_name, hw_model, public_key, matrix_id FROM meshtastic_nodes WHERE node_num = ? LIMIT 1
+`
+
+func (q *Queries) MeshtasticNodeGet(ctx context.Context, nodeNum int64) (MeshtasticNode, error) {
+	row := q.db.QueryRowContext(ctx, meshtasticNodeGet, nodeNum)
+	var i MeshtasticNode
+	err := row.Scan(
+		&i.ID,
+		&i.NodeNum,
+		&i.MeshtasticID,
+		&i.LongName,
+		&i.ShortName,
+		&i.HwModel,
+		&i.PublicKey,
+		&i.MatrixID,
+	)
+	return i, err
+}
+
 const meshtasticNodeUpdate = `-- name: MeshtasticNodeUpdate :exec
-INSERT INTO meshtastic_nodes (node_num, meshtastic_id, long_name, short_name, mac, hw_model, public_key) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT (node_num) DO UPDATE SET
+INSERT INTO meshtastic_nodes (node_num, meshtastic_id, long_name, short_name, hw_model, public_key) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT (node_num) DO UPDATE SET
     meshtastic_id = excluded.meshtastic_id,
     long_name = excluded.long_name,
     short_name = excluded.short_name,
-    mac = excluded.mac,
     hw_model = excluded.hw_model,
     public_key = excluded.public_key
 `
@@ -25,7 +44,6 @@ type MeshtasticNodeUpdateParams struct {
 	MeshtasticID string
 	LongName     sql.NullString
 	ShortName    sql.NullString
-	Mac          sql.NullString
 	HwModel      sql.NullString
 	PublicKey    []byte
 }
@@ -36,7 +54,6 @@ func (q *Queries) MeshtasticNodeUpdate(ctx context.Context, arg MeshtasticNodeUp
 		arg.MeshtasticID,
 		arg.LongName,
 		arg.ShortName,
-		arg.Mac,
 		arg.HwModel,
 		arg.PublicKey,
 	)
