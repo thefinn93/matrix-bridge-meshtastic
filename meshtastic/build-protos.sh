@@ -9,4 +9,4 @@ for src in protobufs-src/meshtastic/*.proto protobufs-src/nanopb.proto; do
     sed -i 's#import "nanopb.proto#import "protobufs/nanopb.proto#' "${dest}"
 done
 
-protoc --go_out=. --go_opt=paths=source_relative --go_opt=Mprotobufs/nanopb.proto=git.janky.solutions/finn/matrix-meshtastic-bridge-go/meshtastic/protobufs protobufs/*
+protoc --go_out=. --go_opt=paths=source_relative --go_opt=Mprotobufs/nanopb.proto=git.janky.solutions/finn/matrix-meshtastic-bridge-go/meshtastic/protobufs protobufs/*.proto
