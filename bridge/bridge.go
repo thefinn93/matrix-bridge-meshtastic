@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 
-	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/db"
-	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/matrix"
-	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/meshtastic/protobufs"
+	"git.janky.solutions/finn/matrix-bridge-meshtastic/db"
+	"git.janky.solutions/finn/matrix-bridge-meshtastic/matrix"
+	"git.janky.solutions/finn/matrix-bridge-meshtastic/meshtastic/protobufs"
 	"github.com/sirupsen/logrus"
 )
 

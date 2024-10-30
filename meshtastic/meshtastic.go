@@ -9,8 +9,8 @@ import (
 	"net/url"
 	"time"
 
-	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/config"
-	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/meshtastic/protobufs"
+	"git.janky.solutions/finn/matrix-bridge-meshtastic/config"
+	"git.janky.solutions/finn/matrix-bridge-meshtastic/meshtastic/protobufs"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 )

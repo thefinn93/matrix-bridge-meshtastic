@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"embed"
 
-	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/config"
+	"git.janky.solutions/finn/matrix-bridge-meshtastic/config"
 	_ "github.com/mattn/go-sqlite3"
 	goose "github.com/pressly/goose/v3"
 	"github.com/sirupsen/logrus"

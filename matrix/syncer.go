@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
-	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/db"
+	"git.janky.solutions/finn/matrix-bridge-meshtastic/db"
 	"maunium.net/go/mautrix/id"
 )
 

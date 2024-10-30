@@ -1,4 +1,4 @@
-module git.janky.solutions/finn/matrix-meshtastic-bridge-go
+module git.janky.solutions/finn/matrix-bridge-meshtastic
 
 go 1.22.7
 

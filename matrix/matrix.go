@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"time"
 
-	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/config"
+	"git.janky.solutions/finn/matrix-bridge-meshtastic/config"
 	"github.com/rs/zerolog"
 	"github.com/sirupsen/logrus"
 	"maunium.net/go/mautrix"

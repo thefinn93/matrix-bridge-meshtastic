@@ -7,12 +7,12 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/bridge"
-	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/config"
-	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/db"
-	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/matrix"
-	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/meshtastic"
-	"git.janky.solutions/finn/matrix-meshtastic-bridge-go/meshtastic/protobufs"
+	"git.janky.solutions/finn/matrix-bridge-meshtastic/bridge"
+	"git.janky.solutions/finn/matrix-bridge-meshtastic/config"
+	"git.janky.solutions/finn/matrix-bridge-meshtastic/db"
+	"git.janky.solutions/finn/matrix-bridge-meshtastic/matrix"
+	"git.janky.solutions/finn/matrix-bridge-meshtastic/meshtastic"
+	"git.janky.solutions/finn/matrix-bridge-meshtastic/meshtastic/protobufs"
 )
 
 func main() {

@@ -3,7 +3,7 @@ syntax = "proto3";
 package meshtastic;
 
 option csharp_namespace = "Meshtastic.Protobufs";
-option go_package = "git.janky.solutions/finn/matrix-meshtastic-bridge-go/meshtastic/protobufs";
+option go_package = "git.janky.solutions/finn/matrix-bridge-meshtastic/meshtastic/protobufs";
 option java_outer_classname = "PaxcountProtos";
 option java_package = "com.geeksville.mesh";
 option swift_prefix = "";
