@@ -8,7 +8,7 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/sirupsen/logrus v1.9.3
 	google.golang.org/protobuf v1.36.2
-	maunium.net/go/mautrix v0.21.1
+	maunium.net/go/mautrix v0.22.1
 )
 
 require (
@@ -21,10 +21,10 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/tidwall/sjson v1.2.5 // indirect
-	go.mau.fi/util v0.8.1 // indirect
+	go.mau.fi/util v0.8.3 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c // indirect
+	golang.org/x/exp v0.0.0-20241215155358-4a5509556b9e // indirect
 	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
