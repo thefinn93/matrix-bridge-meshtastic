@@ -27,3 +27,20 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           push: ${{ github.ref == 'refs/heads/main' }}
+  # deploy:
+  #   name: Deploy to kubernetes
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: git.devhack.net/devhack/containers/deployer:latest
+  #   needs: build-container
+  #   if: github.ref == 'refs/heads/main'
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: deploy
+  #       run: |
+  #         set -euo pipefail
+  #         echo "${{ secrets.KUBERNETES_CLIENT_CONFIG }}" > ~/.kube/config
+  #         set -x
+  #         tag=$(echo "${{ needs.build-container.outputs.tags }}" | tail -n1)
+  #         sed -i "s#image: git.janky.solutions/finn/matrix-bridge-meshtastic:.*#image: ${tag}#" deploy/statefulset.yaml
+  #         kubectl apply -f deploy/
