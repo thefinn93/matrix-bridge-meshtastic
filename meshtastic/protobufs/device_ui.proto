@@ -61,6 +61,11 @@ message DeviceUIConfig {
    * Node list highlightening
    */
   NodeHighlight node_highlight = 13;
+
+  /*
+   * 8 integers for screen calibration data
+   */
+  bytes calibration_data = 14;
 }
 
 
@@ -94,6 +99,11 @@ message NodeFilter {
    * Filter nodes by matching name string
    */
   string node_name = 6;
+   
+  /*
+   * Filter based on channel
+   */
+  int32 channel = 7;
    
 }
 
@@ -215,6 +225,16 @@ enum Language {
   GREEK = 13;
 
   /*
+   * Norwegian
+   */
+  NORWEGIAN = 14;
+
+  /*
+   * Slovenian
+   */
+  SLOVENIAN = 15;
+
+   /*
    * Simplified Chinese (experimental)
    */
   SIMPLIFIED_CHINESE = 30;
