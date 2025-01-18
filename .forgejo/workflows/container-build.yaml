@@ -4,6 +4,8 @@ jobs:
     runs-on: docker
     container:
       image: library/docker:dind
+    outputs:
+      output1: ${{ steps.meta.outputs.tags }}
     steps:
       - run: apk add --no-cache nodejs git
       - name: login to container registry
@@ -42,8 +44,11 @@ jobs:
       - name: deploy
         run: |
           set -exuo pipefail
-          tag=$(echo "${{ needs.build-container.outputs.tags }}" | tail -n1)
+          tag=$(echo "${tags}" | tail -n1)
           sed -i "s#image: git.janky.solutions/finn/matrix-bridge-meshtastic:.*#image: ${tag}#" k8s/meshtastic/statefulset.yaml
+          git config user.email "deployer@janky.solutions"
+          git config user.name "Deployer Robot"
           git commit -am "bump matrix-bridge-meshtastic to ${tag}"
           git push
-
+        env:
+          tags: needs.build-container.outputs.tags
