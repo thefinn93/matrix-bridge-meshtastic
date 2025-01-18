@@ -5,7 +5,7 @@ jobs:
     container:
       image: library/docker:dind
     outputs:
-      output1: ${{ steps.meta.outputs.tags }}
+      tags: "${{ steps.meta.outputs.tags }}"
     steps:
       - run: apk add --no-cache nodejs git
       - name: login to container registry
@@ -51,4 +51,4 @@ jobs:
           git commit -am "bump matrix-bridge-meshtastic to ${tag}"
           git push
         env:
-          tags: needs.build-container.outputs.tags
+          tags: "${{ needs.build-container.outputs.tags }}"
