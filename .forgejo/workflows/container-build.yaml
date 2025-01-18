@@ -37,7 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: https://git.janky.solutions/JankySolutions/infra.git
+          repository: ankySolutions/infra
       - name: deploy
         run: |
           set -exuo pipefail
