@@ -38,6 +38,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: jankysolutions/infra
+          ref: main
       - name: deploy
         run: |
           set -exuo pipefail
