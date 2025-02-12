@@ -1,4 +1,4 @@
-FROM library/golang:1.23 AS build
+FROM library/golang:1.24 AS build
 ADD . /bridge
 WORKDIR /bridge
 RUN go build ./cmd/matrix-bridge-meshtastic
