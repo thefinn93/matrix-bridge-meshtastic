@@ -9,7 +9,7 @@ require (
 	github.com/pressly/goose/v3 v3.24.1
 	github.com/rs/zerolog v1.33.0
 	github.com/sirupsen/logrus v1.9.3
-	google.golang.org/protobuf v1.36.5
+	google.golang.org/protobuf v1.36.6
 	maunium.net/go/mautrix v0.23.2
 )
 
