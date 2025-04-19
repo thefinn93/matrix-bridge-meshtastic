@@ -74,7 +74,7 @@ message AdminMessage {
     SECURITY_CONFIG = 7;
 
     /*
-     *
+     * Session key config
      */
     SESSIONKEY_CONFIG = 8;
 
@@ -152,6 +152,18 @@ message AdminMessage {
      * TODO: REPLACE
      */
     PAXCOUNTER_CONFIG = 12;
+  }
+
+  enum BackupLocation {
+    /*
+     * Backup to the internal flash
+     */
+    FLASH = 0;
+
+    /*
+     * Backup to the SD card
+     */
+    SD = 1;
   }
 
   /*
@@ -270,6 +282,20 @@ message AdminMessage {
      */
     uint32 set_scale = 23;
 
+    /*
+     * Backup the node's preferences
+     */
+    BackupLocation backup_preferences = 24;
+
+    /*
+     * Restore the node's preferences
+     */
+    BackupLocation restore_preferences = 25;
+
+    /*
+     * Remove backups of the node's preferences
+     */
+    BackupLocation remove_backup_preferences = 26;
     /*
      * Set the owner for this node
      */

@@ -72,7 +72,7 @@ message EnvironmentMetrics {
    */
   optional float current = 6;
 
-  /* 
+  /*
    * relative scale IAQ value as measured by Bosch BME680 . value 0-500.
    * Belongs to Air Quality but is not particle but VOC measurement. Other VOC values can also be put in here.
    */
@@ -134,6 +134,25 @@ message EnvironmentMetrics {
   */
   optional float radiation = 18;
 
+  /*
+  * Rainfall in the last hour in mm
+  */
+  optional float rainfall_1h = 19;
+
+    /*
+  * Rainfall in the last 24 hours in mm
+  */
+  optional float rainfall_24h = 20;
+
+ /*
+   * Soil moisture measured (% 1-100)
+   */
+  optional uint32 soil_moisture = 21;
+
+  /*
+   * Soil temperature measured (*C)
+   */
+  optional float soil_temperature = 22;
 }
 
 /*
@@ -234,9 +253,9 @@ message AirQualityMetrics {
    * 10.0um Particle Count
    */
   optional uint32 particles_100um = 12;
-  
+
   /*
-   * 10.0um Particle Count
+   * CO2 concentration in ppm
    */
   optional uint32 co2 = 13;
 }
@@ -262,7 +281,7 @@ message LocalStats {
    * Number of packets sent
    */
   uint32 num_packets_tx = 4;
-  
+
   /*
    * Number of packets received (both good and bad)
    */
@@ -481,17 +500,17 @@ enum TelemetrySensorType {
    * AMS TSL25911FN RGB Light Sensor
    */
   TSL25911FN = 22;
-  
+
   /*
    * AHT10 Integrated temperature and humidity sensor
    */
   AHT10 = 23;
 
   /*
-   * DFRobot Lark Weather station (temperature, humidity, pressure, wind speed and direction) 
+   * DFRobot Lark Weather station (temperature, humidity, pressure, wind speed and direction)
    */
   DFROBOT_LARK = 24;
-  
+
   /*
    * NAU7802 Scale Chip or compatible
    */
@@ -518,15 +537,15 @@ enum TelemetrySensorType {
   CUSTOM_SENSOR = 29;
 
   /*
-   * MAX30102 Pulse Oximeter and Heart-Rate Sensor 
+   * MAX30102 Pulse Oximeter and Heart-Rate Sensor
    */
   MAX30102 = 30;
-  
+
   /*
    * MLX90614 non-contact IR temperature sensor
    */
   MLX90614 = 31;
-  
+
   /*
    * SCD40/SCD41 CO2, humidity, temperature sensor
    */
@@ -536,12 +555,26 @@ enum TelemetrySensorType {
    * ClimateGuard RadSens, radiation, Geiger-Muller Tube
    */
   RADSENS = 33;
-  
+
   /*
    * High accuracy current and voltage
    */
   INA226 = 34;
 
+  /*
+   * DFRobot Gravity tipping bucket rain gauge
+   */
+  DFROBOT_RAIN = 35;
+
+  /*
+   * Infineon DPS310 High accuracy pressure and temperature
+   */
+  DPS310 = 36;
+
+  /*
+   * RAKWireless RAK12035 Soil Moisture Sensor Module
+   */
+  RAK12035 = 37;
 }
 
 /*

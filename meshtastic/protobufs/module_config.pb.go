@@ -2016,7 +2016,7 @@ func (x *ModuleConfig_TelemetryConfig) GetHealthScreenEnabled() bool {
 	return false
 }
 
-// TODO: REPLACE
+// Canned Messages Module Config
 type ModuleConfig_CannedMessageConfig struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
