@@ -38,7 +38,7 @@ func run() error {
 		return err
 	}
 
-	fromRadioCh := make(chan *protobufs.FromRadio)
+	fromRadioCh := make(chan *protobufs.FromRadio, 100)
 	go matrix.Run(ctx)
 	go meshtastic.Receive(ctx, fromRadioCh)
 	go bridge.RunBridge(ctx, fromRadioCh)

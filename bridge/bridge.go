@@ -94,7 +94,16 @@ func handlePacket(ctx context.Context, packet *protobufs.MeshPacket) error {
 		logrus.WithField("source", sourceString).Info("handling incoming meshtastic -> matrix message")
 		return matrix.SendMessage(ctx, fmt.Sprintf("%s: %s (snr: %f, rssi: %d, (hop %d/%d)", sourceString, payload.Decoded.Payload, packet.RxSnr, packet.RxRssi, packet.HopLimit, packet.HopStart))
 	default:
-		logrus.WithField("type", protobufs.PortNum_name[int32(payload.Decoded.Portnum)]).Debug("ignoring unknown app payload")
+		logrus.WithFields(logrus.Fields{
+			"type":          protobufs.PortNum_name[int32(payload.Decoded.Portnum)],
+			"source":        sourceString,
+			"dest":          payload.Decoded.Dest,
+			"request_id":    payload.Decoded.RequestId,
+			"reply_id":      payload.Decoded.ReplyId,
+			"emoji":         payload.Decoded.Emoji,
+			"payload":       string(payload.Decoded.Payload),
+			"payload_bytes": fmt.Sprintf("%x", payload.Decoded.Payload),
+		}).Debug("ignoring unknown app payload")
 	}
 
 	return nil
