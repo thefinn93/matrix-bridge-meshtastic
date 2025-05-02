@@ -105,6 +105,15 @@ func handlePacket(ctx context.Context, packet *protobufs.MeshPacket) error {
 
 		return handleAppNodeInfo(ctx, packet, nodeinfo)
 
+	case protobufs.PortNum_TELEMETRY_APP:
+		telemetry := &protobufs.Telemetry{}
+		err = proto.Unmarshal(payload.Decoded.Payload, telemetry)
+		if err != nil {
+			return fmt.Errorf("error parsing telemetry app packet: %v", err)
+		}
+
+		return handleAppTelemetryInfo(ctx, packet, telemetry)
+
 	default:
 		logrus.WithFields(logrus.Fields{
 			"type":          protobufs.PortNum_name[int32(payload.Decoded.Portnum)],
@@ -123,6 +132,12 @@ func handlePacket(ctx context.Context, packet *protobufs.MeshPacket) error {
 
 func handleAppNodeInfo(ctx context.Context, packet *protobufs.MeshPacket, nodeinfo *protobufs.NodeInfo) error {
 	logrus.WithField("type", "app_node_info").Debugf("received app message with NodeInfo: %+v", nodeinfo)
+
+	return nil
+}
+
+func handleAppTelemetryInfo(ctx context.Context, packet *protobufs.MeshPacket, telemetry *protobufs.Telemetry) error {
+	logrus.WithField("type", "app_telemetry").Debugf("received app message with telemetry: %+v", telemetry)
 
 	return nil
 }
