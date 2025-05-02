@@ -10,6 +10,7 @@ import (
 	"git.janky.solutions/finn/matrix-bridge-meshtastic/matrix"
 	"git.janky.solutions/finn/matrix-bridge-meshtastic/meshtastic/protobufs"
 	"github.com/sirupsen/logrus"
+	"go.starlark.net/lib/proto"
 )
 
 func RunBridge(ctx context.Context, fromRadioCh chan *protobufs.FromRadio) {
@@ -20,6 +21,7 @@ func RunBridge(ctx context.Context, fromRadioCh chan *protobufs.FromRadio) {
 		case *protobufs.FromRadio_Channel:
 			logrus.WithField("type", "channel").Debugf("received %+v", payload)
 		case *protobufs.FromRadio_NodeInfo:
+			logrus.WithField("type", "node_info").Debugf("received %+v", payload)
 			err = handleNodeInfo(ctx, payload.NodeInfo)
 		case *protobufs.FromRadio_Packet:
 			err = handlePacket(ctx, payload.Packet)
@@ -93,6 +95,16 @@ func handlePacket(ctx context.Context, packet *protobufs.MeshPacket) error {
 	case protobufs.PortNum_TEXT_MESSAGE_APP:
 		logrus.WithField("source", sourceString).Info("handling incoming meshtastic -> matrix message")
 		return matrix.SendMessage(ctx, fmt.Sprintf("%s: %s (snr: %f, rssi: %d, (hop %d/%d)", sourceString, payload.Decoded.Payload, packet.RxSnr, packet.RxRssi, packet.HopLimit, packet.HopStart))
+
+	case protobufs.PortNum_NODEINFO_APP:
+		nodeinfo := &protobufs.NodeInfo{}
+		err = proto.Unmarshal(payload.Decoded, &nodeinfo)
+		if err != nil {
+			return fmt.Errorf("error parsing nodeinfo app packet: %v", err)
+		}
+
+		return handleAppNodeInfo(ctx, packet, nodeinfo)
+
 	default:
 		logrus.WithFields(logrus.Fields{
 			"type":          protobufs.PortNum_name[int32(payload.Decoded.Portnum)],
@@ -105,6 +117,12 @@ func handlePacket(ctx context.Context, packet *protobufs.MeshPacket) error {
 			"payload_bytes": fmt.Sprintf("%x", payload.Decoded.Payload),
 		}).Debug("ignoring unknown app payload")
 	}
+
+	return nil
+}
+
+func handleAppNodeInfo(ctx context.Context, packet *protobufs.MeshPacket, nodeinfo *protobufs.NodeInfo) error {
+	logrus.WithField("type", "app_node_info").Debugf("received app message with NodeInfo: %+v", nodeinfo)
 
 	return nil
 }
