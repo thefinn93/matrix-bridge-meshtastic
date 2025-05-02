@@ -10,7 +10,7 @@ import (
 	"git.janky.solutions/finn/matrix-bridge-meshtastic/matrix"
 	"git.janky.solutions/finn/matrix-bridge-meshtastic/meshtastic/protobufs"
 	"github.com/sirupsen/logrus"
-	"go.starlark.net/lib/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 func RunBridge(ctx context.Context, fromRadioCh chan *protobufs.FromRadio) {
