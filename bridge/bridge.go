@@ -98,7 +98,7 @@ func handlePacket(ctx context.Context, packet *protobufs.MeshPacket) error {
 
 	case protobufs.PortNum_NODEINFO_APP:
 		nodeinfo := &protobufs.NodeInfo{}
-		err = proto.Unmarshal(payload.Decoded, &nodeinfo)
+		err = proto.Unmarshal(payload.Decoded.Payload, nodeinfo)
 		if err != nil {
 			return fmt.Errorf("error parsing nodeinfo app packet: %v", err)
 		}
