@@ -97,7 +97,7 @@ func handlePacket(ctx context.Context, packet *protobufs.MeshPacket) error {
 		return matrix.SendMessage(ctx, fmt.Sprintf("%s: %s (snr: %f, rssi: %d, (hop %d/%d)", sourceString, payload.Decoded.Payload, packet.RxSnr, packet.RxRssi, packet.HopLimit, packet.HopStart))
 
 	case protobufs.PortNum_NODEINFO_APP:
-		nodeinfo := &protobufs.NodeInfo{}
+		nodeinfo := &protobufs.User{}
 		err = proto.Unmarshal(payload.Decoded.Payload, nodeinfo)
 		if err != nil {
 			return fmt.Errorf("error parsing nodeinfo app packet: %v", err)
@@ -130,8 +130,8 @@ func handlePacket(ctx context.Context, packet *protobufs.MeshPacket) error {
 	return nil
 }
 
-func handleAppNodeInfo(ctx context.Context, packet *protobufs.MeshPacket, nodeinfo *protobufs.NodeInfo) error {
-	logrus.WithField("type", "app_node_info").Debugf("received app message with NodeInfo: %+v", nodeinfo)
+func handleAppNodeInfo(ctx context.Context, packet *protobufs.MeshPacket, user *protobufs.User) error {
+	logrus.WithField("type", "app_node_info").Debugf("received app message with user: %+v", user)
 
 	return nil
 }
