@@ -91,19 +91,27 @@ func handlePacket(ctx context.Context, packet *protobufs.MeshPacket) error {
 		sourceString = fmt.Sprintf("%x", packet.From)
 	}
 
+	log := logrus.WithFields(logrus.Fields{
+		"app":        protobufs.PortNum_name[int32(payload.Decoded.Portnum)],
+		"source":     sourceString,
+		"dest":       payload.Decoded.Dest,
+		"request_id": payload.Decoded.RequestId,
+		"reply_id":   payload.Decoded.ReplyId,
+	})
+
 	switch payload.Decoded.Portnum {
 	case protobufs.PortNum_TEXT_MESSAGE_APP:
-		logrus.WithField("source", sourceString).Info("handling incoming meshtastic -> matrix message")
+		log.Info("handling incoming meshtastic -> matrix message")
 		return matrix.SendMessage(ctx, fmt.Sprintf("%s: %s (snr: %f, rssi: %d, (hop %d/%d)", sourceString, payload.Decoded.Payload, packet.RxSnr, packet.RxRssi, packet.HopLimit, packet.HopStart))
 
 	case protobufs.PortNum_NODEINFO_APP:
-		nodeinfo := &protobufs.User{}
-		err = proto.Unmarshal(payload.Decoded.Payload, nodeinfo)
+		user := &protobufs.User{}
+		err = proto.Unmarshal(payload.Decoded.Payload, user)
 		if err != nil {
 			return fmt.Errorf("error parsing nodeinfo app packet: %v", err)
 		}
 
-		return handleAppNodeInfo(ctx, packet, nodeinfo)
+		log.Debugf("%+v", user)
 
 	case protobufs.PortNum_TELEMETRY_APP:
 		telemetry := &protobufs.Telemetry{}
@@ -112,32 +120,24 @@ func handlePacket(ctx context.Context, packet *protobufs.MeshPacket) error {
 			return fmt.Errorf("error parsing telemetry app packet: %v", err)
 		}
 
-		return handleAppTelemetryInfo(ctx, packet, telemetry)
+		log.Debugf("%+v", telemetry)
+
+	case protobufs.PortNum_POSITION_APP:
+		position := &protobufs.Position{}
+		err = proto.Unmarshal(payload.Decoded.Payload, position)
+		if err != nil {
+			return fmt.Errorf("error parsing telemetry app packet: %v", err)
+		}
+
+		log.Debugf("%+v", position)
 
 	default:
-		logrus.WithFields(logrus.Fields{
-			"type":          protobufs.PortNum_name[int32(payload.Decoded.Portnum)],
-			"source":        sourceString,
-			"dest":          payload.Decoded.Dest,
-			"request_id":    payload.Decoded.RequestId,
-			"reply_id":      payload.Decoded.ReplyId,
+		log.WithFields(logrus.Fields{
 			"emoji":         payload.Decoded.Emoji,
 			"payload":       string(payload.Decoded.Payload),
 			"payload_bytes": fmt.Sprintf("%x", payload.Decoded.Payload),
-		}).Debug("ignoring unknown app payload")
+		}).Debug("ignoring unknown app")
 	}
-
-	return nil
-}
-
-func handleAppNodeInfo(ctx context.Context, packet *protobufs.MeshPacket, user *protobufs.User) error {
-	logrus.WithField("type", "app_node_info").Debugf("received app message with user: %+v", user)
-
-	return nil
-}
-
-func handleAppTelemetryInfo(ctx context.Context, packet *protobufs.MeshPacket, telemetry *protobufs.Telemetry) error {
-	logrus.WithField("type", "app_telemetry").Debugf("received app message with telemetry: %+v", telemetry)
 
 	return nil
 }
