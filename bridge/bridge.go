@@ -13,6 +13,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+var channelNames = map[int32]string{}
+
 func RunBridge(ctx context.Context, fromRadioCh chan *protobufs.FromRadio) {
 	for {
 		var err error
@@ -20,6 +22,7 @@ func RunBridge(ctx context.Context, fromRadioCh chan *protobufs.FromRadio) {
 		switch payload := fromRadio.PayloadVariant.(type) {
 		case *protobufs.FromRadio_Channel:
 			logrus.WithField("type", "channel").Debugf("received %+v", payload)
+			channelNames[payload.Channel.Index] = payload.Channel.Settings.Name
 		case *protobufs.FromRadio_NodeInfo:
 			logrus.WithField("type", "node_info").Debugf("received %+v", payload)
 			err = handleNodeInfo(ctx, payload.NodeInfo)
@@ -102,7 +105,9 @@ func handlePacket(ctx context.Context, packet *protobufs.MeshPacket) error {
 	switch payload.Decoded.Portnum {
 	case protobufs.PortNum_TEXT_MESSAGE_APP:
 		log.Info("handling incoming meshtastic -> matrix message")
-		return matrix.SendMessage(ctx, fmt.Sprintf("%s: %s (snr: %f, rssi: %d, (hop %d/%d)", sourceString, payload.Decoded.Payload, packet.RxSnr, packet.RxRssi, packet.HopLimit, packet.HopStart))
+		channelName := channelNames[int32(packet.Channel)]
+		msg := fmt.Sprintf("%s: %s (snr: %f, rssi: %d, hop: %d/%d, channel: %s)", sourceString, payload.Decoded.Payload, packet.RxSnr, packet.RxRssi, packet.HopStart-packet.HopLimit, packet.HopStart, channelName)
+		return matrix.SendMessage(ctx, msg)
 
 	case protobufs.PortNum_NODEINFO_APP:
 		user := &protobufs.User{}

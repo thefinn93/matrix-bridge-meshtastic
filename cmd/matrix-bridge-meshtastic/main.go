@@ -27,6 +27,7 @@ func run() error {
 		return err
 	}
 
+	logrus.Info("migrating database")
 	if err := db.Migrate(); err != nil {
 		return err
 	}
