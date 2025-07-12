@@ -105,7 +105,14 @@ func handlePacket(ctx context.Context, packet *protobufs.MeshPacket) error {
 	switch payload.Decoded.Portnum {
 	case protobufs.PortNum_TEXT_MESSAGE_APP:
 		log.Info("handling incoming meshtastic -> matrix message")
-		channelName := channelNames[int32(packet.Channel)]
+		channelName := ""
+		if packet.Channel > 0 {
+			var ok bool
+			channelName, ok = channelNames[int32(packet.Channel)]
+			if !ok {
+				channelName = fmt.Sprintf("#%d", packet.Channel)
+			}
+		}
 		msg := fmt.Sprintf("%s: %s (snr: %f, rssi: %d, hop: %d/%d, channel: %s)", sourceString, payload.Decoded.Payload, packet.RxSnr, packet.RxRssi, packet.HopStart-packet.HopLimit, packet.HopStart, channelName)
 		return matrix.SendMessage(ctx, msg)
 
