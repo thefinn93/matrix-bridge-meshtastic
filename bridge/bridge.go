@@ -22,7 +22,10 @@ func RunBridge(ctx context.Context, fromRadioCh chan *protobufs.FromRadio) {
 		switch payload := fromRadio.PayloadVariant.(type) {
 		case *protobufs.FromRadio_Channel:
 			logrus.WithField("type", "channel").Debugf("received %+v", payload)
-			channelNames[payload.Channel.Index] = payload.Channel.Settings.Name
+			if payload.Channel.Settings != nil {
+				channelNames[payload.Channel.Index] = payload.Channel.Settings.Name
+				logrus.WithFields(logrus.Fields{"channel": payload.Channel.Index, "name": payload.Channel.Settings.Name}).Debug("stored channel name")
+			}
 		case *protobufs.FromRadio_NodeInfo:
 			logrus.WithField("type", "node_info").Debugf("received %+v", payload)
 			err = handleNodeInfo(ctx, payload.NodeInfo)
@@ -111,6 +114,8 @@ func handlePacket(ctx context.Context, packet *protobufs.MeshPacket) error {
 			channelName, ok = channelNames[int32(packet.Channel)]
 			if !ok {
 				channelName = fmt.Sprintf("#%d", packet.Channel)
+			} else {
+				channelName = fmt.Sprintf("%s (#%d)", channelName, packet.Channel)
 			}
 		}
 		msg := fmt.Sprintf("%s: %s (snr: %f, rssi: %d, hop: %d/%d, channel: %s)", sourceString, payload.Decoded.Payload, packet.RxSnr, packet.RxRssi, packet.HopStart-packet.HopLimit, packet.HopStart, channelName)
