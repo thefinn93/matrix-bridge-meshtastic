@@ -108,7 +108,7 @@ func handlePacket(ctx context.Context, packet *protobufs.MeshPacket) error {
 	switch payload.Decoded.Portnum {
 	case protobufs.PortNum_TEXT_MESSAGE_APP:
 		log.Info("handling incoming meshtastic -> matrix message")
-		channelName := ""
+		channelName := "PRIMARY"
 		if packet.Channel > 0 {
 			var ok bool
 			channelName, ok = channelNames[int32(packet.Channel)]
