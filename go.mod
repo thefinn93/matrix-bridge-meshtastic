@@ -9,8 +9,8 @@ require (
 	github.com/pressly/goose/v3 v3.26.0
 	github.com/rs/zerolog v1.34.0
 	github.com/sirupsen/logrus v1.9.3
-	google.golang.org/protobuf v1.36.9
-	maunium.net/go/mautrix v0.25.1
+	google.golang.org/protobuf v1.36.10
+	maunium.net/go/mautrix v0.25.2
 )
 
 require (
@@ -23,12 +23,12 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tidwall/sjson v1.2.5 // indirect
-	go.mau.fi/util v0.9.1 // indirect
+	go.mau.fi/util v0.9.2 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/crypto v0.42.0 // indirect
-	golang.org/x/exp v0.0.0-20250911091902-df9299821621 // indirect
-	golang.org/x/net v0.44.0 // indirect
+	golang.org/x/crypto v0.43.0 // indirect
+	golang.org/x/exp v0.0.0-20251009144603-d2f985daa21b // indirect
+	golang.org/x/net v0.46.0 // indirect
 	golang.org/x/sync v0.17.0 // indirect
-	golang.org/x/sys v0.36.0 // indirect
-	golang.org/x/text v0.29.0 // indirect
+	golang.org/x/sys v0.37.0 // indirect
+	golang.org/x/text v0.30.0 // indirect
 )
